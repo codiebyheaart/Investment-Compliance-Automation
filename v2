@@ -1,0 +1,91 @@
+#  IMA Processor V2
+
+> **Automated compliance clause extraction and risk assessment for Investment Management Agreements**
+
+---
+
+## What It Does
+
+Uploads an IMA PDF → extracts all text → detects sections → pulls out every compliance clause → classifies each clause as HIGH / MEDIUM / LOW risk → codes executable rules → generates a board-ready executive summary.
+
+**Time saved:** Manual IMA review = 2–4 hours. This workflow = ~5 minutes.
+
+---
+
+## Flow Diagram
+
+```mermaid
+flowchart LR
+    A([▶ Start]) --> B[📋 Upload IMA Document\nui node]
+    B --> C[📄 Extract & Clean PDF Text\nscript node]
+    C --> D[🗺️ Section Detector\nllm node]
+    D --> E[⚖️ ClauseExtractor\nllm node]
+    E --> F[🚦 Batch Risk Classifier\nllm node]
+    F --> G[💻 Rule Coder\nllm node]
+    G --> H[📊 Executive Summary\nllm node]
+    H --> I([⏹ End])
+```
+
+---
+
+## Nodes Used
+
+| # | Node | Type | Why We Use It |
+|---|------|------|---------------|
+| 1 | **Upload IMA Document** | `ui` | Collects client name, portfolio ID, mandate date, and the PDF file from the user before processing starts |
+| 2 | **Extract & Clean PDF Text** | `script` (nodejs) | Pure Node.js — finds the uploaded PDF in `/app/temp`, extracts readable text using PDF BT/ET operators with a printable-char fallback. No shell commands = no timeouts |
+| 3 | **Section Detector** | `llm` | Identifies and maps all major IMA sections (Investment Guidelines, Fees, Termination, Reporting, etc.) so the next node knows what structure to expect |
+| 4 | **ClauseExtractor** | `llm` | Reads all sections and pulls out every individual compliance clause with its type (limit / restriction / prohibition / requirement) |
+| 5 | **Batch Risk Classifier** | `llm` | Assesses ALL clauses in one pass — assigns `riskLevel` (HIGH/MEDIUM/LOW), `riskScore` (1-10), reasons, recommendations, and confidence score |
+| 6 | **Rule Coder** | `llm` | Converts risk-assessed clauses into executable compliance rules: `BLOCK`, `ALERT`, or `WARN` actions with parameters for the Fund Designer engine |
+| 7 | **Executive Summary** | `llm` | Generates a professional board-ready report with client details, risk breakdown table, rules coded summary, and key recommendations |
+
+---
+
+## Key Design Decisions
+
+### ✅ Why `script` node instead of an LLM for PDF extraction?
+LLMs can't read binary PDF files. A Node.js script reads the raw bytes, extracts text using PDF internal operators, and passes clean text downstream.
+
+### ✅ Why Batch Risk Classifier instead of a Loop?
+codiebyheart's loop/repeat nodes had variable name collision issues (`{{response}}` was ambiguous between nodes). A single batch LLM processes all clauses at once — simpler, faster, and more reliable.
+
+### ✅ Why remove the if-else node?
+The codiebyheart `if-else` node's condition evaluator (`data.response.includes('HIGH')`) was broken in this version of the platform — always throws an error. Replaced with a linear flow that handles all risk levels in one Rule Coder prompt.
+
+### ✅ Variable naming (most important lesson)
+Never use generic `{{response}}` — always use explicit node-label references:
+```
+{{ClauseExtractor[data.response]s}}
+{{Upload IMA Document[data.response["clientName"]]s}}
+{{Batch Risk Classifier[data.response]s}}
+```
+
+---
+
+## What It Produces
+
+| Output | Description |
+|--------|-------------|
+| **Risk Assessment** | 20 clauses scored HIGH/MEDIUM/LOW with reasons and recommendations |
+| **Compliance Rules** | BLOCK/ALERT/WARN rules with parameters for the compliance engine |
+| **Executive Summary** | Board-ready report with metrics table |
+
+---
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `workflow-Guideline_IQ_IMA_Processor_v2.json` | Import this into codiebyheart |
+| `sample-ima-test.pdf` | Test PDF to upload during the UI step |
+
+---
+
+## How to Run
+
+1. Import `workflow-Guideline_IQ_IMA_Processor_v2.json` into codiebyheart
+2. Click **Run**
+3. In the **Upload IMA Document** form: fill client details and upload `sample-ima-test.pdf`
+4. Wait ~5 minutes for all LLM nodes to complete
+5. View the Executive Summary output
