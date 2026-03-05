@@ -88,34 +88,51 @@ Are there any questions on the workflow?"
 *If anyone asks "What exactly does this specific node do?", use these simple 1-sentence answers:*
 
 **Input & Extraction Nodes:**
-1. **Client Intake Form (trigger):** Where the user uploads the IMA PDF to start the process.
-2. **Enterprise PDF Chunker:** Splits the large PDF into smaller, readable pieces for the AI.
-3. **DocType Classifier:** Quickly identifies if the document is an IMA, Prospectus, or ISDA.
-4. **Metadata Extractor:** Pulls out basic info like "Client Name", "Date", and "Jurisdiction".
-5. **IMA Section Mapper:** Maps out the document structure (where the ESG rules vs. Liquidity rules are).
-6. **Master Clause Extractor:** Pulls out the exact legal rules (e.g., "No single stock over 10%").
-7. **Conflict & Gap Detector:** Finds contradictory rules or missing regulatory language inside the IMA.
+## 1. **Client Intake Form (trigger):** Where the user uploads the IMA PDF to start the process.
+
+## 2. **Enterprise PDF Chunker:** Splits the large PDF into smaller, readable pieces for the AI.
+
+##3. **DocType Classifier:** Quickly identifies if the document is an IMA, Prospectus, or ISDA.
+
+##4. **Metadata Extractor:** Pulls out basic info like "Client Name", "Date", and "Jurisdiction".
+## 5. **IMA Section Mapper:** Maps out the document structure (where the ESG rules vs. Liquidity rules are).
+
+##6. **Master Clause Extractor:** Pulls out the exact legal rules (e.g., "No single stock over 10%").
+
+##7. **Conflict & Gap Detector:** Finds contradictory rules or missing regulatory language inside the IMA.
 
 **Analysis & Risk Nodes:**
-8. **Parallel Risk Processor (Repeat):** A container that runs 3 agents at the same time to speed up processing.
-9. **Batch Risk Analyser:** Scores the risk (High/Medium/Low) for a small batch of clauses.
-10. **Risk Results Collector:** Cleans and compresses the data so the next AI node doesn't get overloaded.
-11. **Risk Aggregator:** Merges the 3 parallel batches back into one central risk report.
-12. **Regulatory Cross-Reference:** Tags each risk with the exact law it relates to (like FCA or MiFID II).
+## 8. **Parallel Risk Processor (Repeat):** A container that runs 3 agents at the same time to speed up processing.
+
+## 9. **Batch Risk Analyser:** Scores the risk (High/Medium/Low) for a small batch of clauses.
+## 10. **Risk Results Collector:** Cleans and compresses the data so the next AI node doesn't get overloaded.
+
+##11. **Risk Aggregator:** Merges the 3 parallel batches back into one central risk report.
+ ##12. **Regulatory Cross-Reference:** Tags each risk with the exact law it relates to (like FCA or MiFID II).
 
 **The Demo Core Nodes:**
-13. **Portfolio Snapshot Builder:** Simulates our $2.5B portfolio with live stock and bond positions.
-14. **Real-Time Breach Detector:** Compares the live portfolio against the IMA rules to find immediate violations.
-15. **Breach Status Classifier:** Looks at the detector's output and shouts a clear "BREACH" or "CLEAN".
-16. **Breach Decision Router (Switch):** Automatically sends the workflow down the Red path (Escalation) or Green path (Clean Report).
+## 13. **Portfolio Snapshot Builder:** Simulates our $2.5B portfolio with live stock and bond positions.
+## 14. **Real-Time Breach Detector:** Compares the live portfolio against the IMA rules to find immediate violations.
+
+## 15. **Breach Status Classifier:** Looks at the detector's output and shouts a clear "BREACH" or "CLEAN".
+
+## 16. **Breach Decision Router (Switch):** Automatically sends the workflow down the Red path (Escalation) or Green path (Clean Report).
 
 **Output & Action Nodes:**
-17. **Escalation Alert Generator:** Creates the notification path (PM → Head of Compliance → CIO) with deadlines.
-18. **Personalisation Engine:** Generates the exact trades needed to fix the portfolio (e.g., "Sell $50M Apple").
-19. **No-Action Compliance Report:** Generates a Clean bill of health if no breaches were found.
-20. **Bodhi Compliance MCP:** Gives the AI secure access to external compliance databases or tools.
-21. **Compliance Verification Agent:** A smart agent that double-checks the final report for quality and accuracy.
-22. **Rule Engine Coder:** Translates the English IMA rules into actual computer code for automated daily checking.
-23. **Executive Summary Generator:** Writes the final, board-ready report we see at the end.
-24. **UI_JSON_Builder:** Formats all the data nicely for the final visual dashboard.
-25. **Preview Node:** Displays the final visual dashboard to the user.
+## 17. **Escalation Alert Generator:** Creates the notification path (PM → Head of Compliance → CIO) with deadlines.
+
+## 18. **Personalisation Engine:** Generates the exact trades needed to fix the portfolio (e.g., "Sell $50M Apple").
+
+## 19. **No-Action Compliance Report:** Generates a Clean bill of health if no breaches were found.
+
+## 20. **Bodhi Compliance MCP:** Gives the AI secure access to external compliance databases or tools.
+
+## 21. **Compliance Verification Agent:** A smart agent that double-checks the final report for quality and accuracy.
+
+## 22. **Rule Engine Coder:** Translates the English IMA rules into actual computer code for automated daily checking.
+
+## 23. **Executive Summary Generator:** Writes the final, board-ready report we see at the end.
+
+## 24. **UI_JSON_Builder:** Formats all the data nicely for the final visual dashboard.
+
+## 25. **Preview Node:** Displays the final visual dashboard to the user.
